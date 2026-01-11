@@ -73,9 +73,9 @@ class MedicalRecordWindow:
         self.record_tree.heading("date", text="日期", anchor="w")
         self.record_tree.column("date", width=100)
         self.record_tree.heading("diagnosis", text="诊断", anchor="w")
-        self.record_tree.column("diagnosis", width=150)
+        self.record_tree.column("diagnosis", width=250)  # 增加宽度
         self.record_tree.heading("treatment", text="治疗方案", anchor="w")
-        self.record_tree.column("treatment", width=200)
+        self.record_tree.column("treatment", width=300)  # 增加宽度
         self.record_tree.heading("actions", text="操作", anchor="w")
         self.record_tree.column("actions", width=80)
         
@@ -136,9 +136,20 @@ class MedicalRecordWindow:
         
         # 添加数据
         for index, record in enumerate(records):
+            # 截断过长的诊断和治疗方案文本以适应表格
+            diagnosis_short = record[3] if record[3] else ""
+            treatment_short = record[4] if record[4] else ""
+            
+            # 如果文本过长，截取前面部分并添加省略号
+            if len(diagnosis_short) > 30:
+                diagnosis_short = diagnosis_short[:30] + "..."
+            if len(treatment_short) > 30:
+                treatment_short = treatment_short[:30] + "..."
+            
             # 添加操作按钮的文本
-            record_with_action = record + ("查看处方",)
+            record_with_action = (record[0], record[1], record[2], diagnosis_short, treatment_short, "查看处方")
             item_id = self.record_tree.insert("", "end", values=record_with_action)
+            
             # 根据行号设置交替颜色
             if index % 2 == 0:
                 self.record_tree.item(item_id, tags=("evenrow",))
@@ -194,9 +205,20 @@ class MedicalRecordWindow:
         
         # 添加查询结果
         for index, record in enumerate(records):
+            # 截断过长的诊断和治疗方案文本以适应表格
+            diagnosis_short = record[3] if record[3] else ""
+            treatment_short = record[4] if record[4] else ""
+            
+            # 如果文本过长，截取前面部分并添加省略号
+            if len(diagnosis_short) > 30:
+                diagnosis_short = diagnosis_short[:30] + "..."
+            if len(treatment_short) > 30:
+                treatment_short = treatment_short[:30] + "..."
+            
             # 添加操作按钮的文本
-            record_with_action = record + ("查看处方",)
+            record_with_action = (record[0], record[1], record[2], diagnosis_short, treatment_short, "查看处方")
             item_id = self.record_tree.insert("", "end", values=record_with_action)
+            
             # 根据行号设置交替颜色
             if index % 2 == 0:
                 self.record_tree.item(item_id, tags=("evenrow",))

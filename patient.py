@@ -389,6 +389,9 @@ class CreatePatientWindow:
         self.master.geometry("1200x700")  # 调整窗口尺寸
         self.master.resizable(True, True)
         
+        # 防抖变量
+        self.debounce_timer = None
+        
         # 创建主框架
         main_frame = ttk.Frame(self.master)
         main_frame.pack(fill="both", expand=True, padx=10, pady=10)
@@ -1098,24 +1101,51 @@ class CreatePatientWindow:
     
     def check_existing_patient(self, event=None):
         """检查是否已存在相同姓名和电话的患者"""
+        # 打印调试信息，确认事件被触发
+        print(f"check_existing_patient triggered. Name: '{self.name_entry.get().strip()}', Phone: '{self.phone_entry.get().strip()}'")
+        
+        # 直接执行检查，不再使用防抖
+        self._perform_check_existing_patient()
+    
+    def _perform_check_existing_patient(self):
+        """实际执行检查的方法"""
         name = self.name_entry.get().strip()
         phone = self.phone_entry.get().strip()
+        
+        print(f"_perform_check_existing_patient called. Name: '{name}', Phone: '{phone}'")
         
         # 只有当姓名和电话都填写完整时才检查
         if name and phone:
             conn = get_connection()
             cursor = conn.cursor()
-            cursor.execute("SELECT history FROM patients WHERE name = ? AND phone = ?", (name, phone))
-            existing = cursor.fetchone()
-            conn.close()
-            
-            if existing and existing[0]:  # 如果找到了现有患者且有病史
-                # 自动填充病史
-                self.history_text.delete("1.0", tk.END)
-                self.history_text.insert("1.0", existing[0])
+            try:
+                cursor.execute("SELECT history FROM patients WHERE name = ? AND phone = ?", (name, phone))
+                existing = cursor.fetchone()
+                print(f"Database query result: {existing}")
                 
-                # 可以添加提示信息
-                # messagebox.showinfo("提示", "检测到该患者已存在，病史已自动填充")
+                if existing and existing[0]:  # 如果找到了现有患者且有病史
+                    print(f"Found existing patient history: {existing[0][:50]}...")
+                    # 自动填充病史
+                    self.history_text.delete("1.0", tk.END)
+                    self.history_text.insert("1.0", existing[0])
+                    
+                    # 提示信息
+                    messagebox.showinfo("提示", "检测到该患者已存在，病史已自动填充")
+                else:
+                    print("No existing patient found or no history")
+                    # 如果没有找到现有患者，且病史文本框中有内容，询问是否清空
+                    current_history = self.history_text.get("1.0", "end").strip()
+                    if current_history:
+                        # 可以选择保留当前病史或清空
+                        pass  # 暂时不处理
+            except Exception as e:
+                print(f"查询患者信息时出错: {e}")
+            finally:
+                conn.close()
+        else:
+            print("Name or phone is empty, skipping query")
+            # 如果姓名或电话为空，不清空病史（可能用户正在输入）
+            pass
 
 class EditPatientWindow:
     def __init__(self, master, parent_window, patient_id, patient_name, patient_gender, patient_age, patient_phone, patient_history):
