@@ -199,6 +199,7 @@ class MedicineWindow:
         self.name_entry.delete(0, tk.END)
         self.stock_entry.delete(0, tk.END)
         self.unit_entry.current(0)
+        self.usage_entry.delete(0, tk.END)
     
     def on_medicine_selected(self, event):
         """处理药品列表项双击事件"""

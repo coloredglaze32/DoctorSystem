@@ -1167,7 +1167,16 @@ class EditPatientWindow:
         btn_frame.grid(row=2, column=0, columnspan=8, pady=5)
         
         ttk.Button(btn_frame, text="保存", command=self.save_patient).pack(side="left", padx=5)
+        ttk.Button(btn_frame, text="清空", command=self.clear_form).pack(side="left", padx=5)
         ttk.Button(btn_frame, text="取消", command=self.master.destroy).pack(side="left", padx=5)
+    
+    def clear_form(self):
+        """清空表单"""
+        self.name_entry.delete(0, tk.END)
+        self.gender_entry.current(0)
+        self.age_entry.delete(0, tk.END)
+        self.phone_entry.delete(0, tk.END)
+        self.history_text.delete("1.0", tk.END)
 
     def save_patient(self):
         """保存患者信息"""
