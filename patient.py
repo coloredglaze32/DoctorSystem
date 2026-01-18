@@ -32,23 +32,23 @@ class PatientManagementWindow:
         search_frame.pack(fill="x", padx=10, pady=5)
         
         # 姓名查询
-        ttk.Label(search_frame, text="姓名:", font=("微软雅黑", 9, "bold")).grid(row=0, column=0, padx=5, pady=5, sticky="e")
-        self.name_search = ttk.Entry(search_frame, width=15)
-        self.name_search.grid(row=0, column=1, padx=5, pady=5)
+        ttk.Label(search_frame, text="姓名:", font=("微软雅黑", 10, "bold")).grid(row=0, column=0, padx=5, pady=10, sticky="e")
+        self.name_search = ttk.Entry(search_frame, width=15, font=("微软雅黑", 10))
+        self.name_search.grid(row=0, column=1, padx=5, pady=10)
         
         # 手机号查询
-        ttk.Label(search_frame, text="手机号:", font=("微软雅黑", 9, "bold")).grid(row=0, column=2, padx=5, pady=5, sticky="e")
-        self.phone_search = ttk.Entry(search_frame, width=15)
-        self.phone_search.grid(row=0, column=3, padx=5, pady=5)
+        ttk.Label(search_frame, text="手机号:", font=("微软雅黑", 10, "bold")).grid(row=0, column=2, padx=5, pady=10, sticky="e")
+        self.phone_search = ttk.Entry(search_frame, width=15, font=("微软雅黑", 10))
+        self.phone_search.grid(row=0, column=3, padx=5, pady=10)
         
         # 年龄查询
-        ttk.Label(search_frame, text="年龄:", font=("微软雅黑", 9, "bold")).grid(row=0, column=4, padx=5, pady=5, sticky="e")
-        self.age_search = ttk.Entry(search_frame, width=10)
-        self.age_search.grid(row=0, column=5, padx=5, pady=5)
+        ttk.Label(search_frame, text="年龄:", font=("微软雅黑", 10, "bold")).grid(row=0, column=4, padx=5, pady=10, sticky="e")
+        self.age_search = ttk.Entry(search_frame, width=10, font=("微软雅黑", 10))
+        self.age_search.grid(row=0, column=5, padx=5, pady=10)
 
         # 查询按钮
         btn_frame = ttk.Frame(search_frame)
-        btn_frame.grid(row=0, column=6, columnspan=2, padx=5, pady=5)
+        btn_frame.grid(row=0, column=6, columnspan=2, padx=5, pady=10)
         
         ttk.Button(btn_frame, text="查询", command=self.search_patients).pack(side="left", padx=5)
         ttk.Button(btn_frame, text="重置", command=self.reset_search).pack(side="left", padx=5)
@@ -60,27 +60,27 @@ class PatientManagementWindow:
         
         # 创建树形视图
         columns = ("id", "name", "gender", "age", "phone", "history", "modify", "delete", "export")
-        self.tree = ttk.Treeview(list_frame, columns=columns, show="headings", style="Custom.Treeview")
+        self.tree = ttk.Treeview(list_frame, columns=columns, show="headings", height=15)
         
-        # 设置列标题（左对齐）
-        self.tree.heading("id", text="ID", anchor="w")
-        self.tree.column("id", width=50)
-        self.tree.heading("name", text="姓名", anchor="w")
-        self.tree.column("name", width=100)
-        self.tree.heading("gender", text="性别", anchor="w")
-        self.tree.column("gender", width=50)
-        self.tree.heading("age", text="年龄", anchor="w")
-        self.tree.column("age", width=50)
-        self.tree.heading("phone", text="手机号", anchor="w")
-        self.tree.column("phone", width=100)
-        self.tree.heading("history", text="病史", anchor="w")
-        self.tree.column("history", width=150)
-        self.tree.heading("modify", text="修改", anchor="w")
-        self.tree.column("modify", width=60)
-        self.tree.heading("delete", text="删除", anchor="w")
-        self.tree.column("delete", width=60)
-        self.tree.heading("export", text="导出", anchor="w")
-        self.tree.column("export", width=60)
+        # 设置列标题（居中对齐）
+        self.tree.heading("id", text="ID", anchor="center")
+        self.tree.column("id", width=50, anchor="center")
+        self.tree.heading("name", text="姓名", anchor="center")
+        self.tree.column("name", width=100, anchor="center")
+        self.tree.heading("gender", text="性别", anchor="center")
+        self.tree.column("gender", width=60, anchor="center")
+        self.tree.heading("age", text="年龄", anchor="center")
+        self.tree.column("age", width=60, anchor="center")
+        self.tree.heading("phone", text="手机号", anchor="center")
+        self.tree.column("phone", width=120, anchor="center")
+        self.tree.heading("history", text="病史", anchor="center")
+        self.tree.column("history", width=150, anchor="center")
+        self.tree.heading("modify", text="修改", anchor="center")
+        self.tree.column("modify", width=70, anchor="center")
+        self.tree.heading("delete", text="删除", anchor="center")
+        self.tree.column("delete", width=70, anchor="center")
+        self.tree.heading("export", text="导出", anchor="center")
+        self.tree.column("export", width=70, anchor="center")
         
         # 添加滚动条
         scrollbar = ttk.Scrollbar(list_frame, orient="vertical", command=self.tree.yview)
@@ -93,15 +93,15 @@ class PatientManagementWindow:
         # 配置样式以添加交替行颜色
         style = ttk.Style()
         # 定义样式，注意在ttk中需要使用配置方式
-        style.configure("Custom.Treeview", rowheight=25)
-        style.map("Custom.Treeview",
+        style.configure("Treeview", rowheight=25, font=("微软雅黑", 10))
+        style.map("Treeview",
             background=[('selected', '#3a7fd0')],
             foreground=[('selected', 'white')]
         )
         # 为交替行定义样式
-        style.configure("evenrow.Treeview", background="#f0f0f0", foreground="black")
-        style.configure("oddrow.Treeview", background="white", foreground="black")
-        style.configure("Custom.Treeview.Heading", anchor="w")
+        style.configure("Treeview.EvenRow", background="#f8f9fa", foreground="black")
+        style.configure("Treeview.OddRow", background="white", foreground="black")
+        style.configure("Treeview.Heading", font=("微软雅黑", 10, "bold"), background="#2c3e50", foreground="white")
         
         # 绑定双击事件 - 跳转到病历
         self.tree.bind("<Double-1>", self.on_patient_double_click)

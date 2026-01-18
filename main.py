@@ -30,9 +30,9 @@ def main():
 def show_main_app():
     """显示主应用程序窗口"""
     # 创建主窗口，使用ttkbootstrap样式
-    root = ttk.Window(themename="flatly")
+    root = ttk.Window(themename="superhero")
     root.title("中医诊所管理系统")
-    root.geometry("1200x700")
+    root.geometry("1200x800")
     
     # 配置Treeview的交替行颜色样式
     style = Style()
@@ -46,45 +46,27 @@ def show_main_app():
     title_label = ttk.Label(
         header_frame, 
         text="中医诊所管理系统", 
-        font=("微软雅黑", 18, "bold"),
-        bootstyle="inverse-light"
+        font=("微软雅黑", 20, "bold"),
+        bootstyle="inverse-primary"
     )
-    title_label.pack(pady=15)
+    title_label.pack(pady=20)
     
     # 主内容区域
     content_frame = ttk.Frame(root)
     content_frame.pack(fill="both", expand=True, padx=20, pady=(0, 20))
     
-    # 创建菜单
-    menu = tk.Menu(root, font=("微软雅黑", 10))
+    # 创建工具栏
+    toolbar = ttk.Frame(root, bootstyle="secondary")
+    toolbar.pack(fill="x", padx=20, pady=(0, 5))
     
-    # 文件菜单
-    file_menu = tk.Menu(menu, tearoff=0, font=("微软雅黑", 10))
-    file_menu.add_command(label="导出所有数据", command=lambda: export_all_data(content_frame))
-    file_menu.add_separator()
-    file_menu.add_command(label="退出", command=root.quit)
-    menu.add_cascade(label="文件", menu=file_menu)
-    
-    # 患者菜单 - 直接跳转到患者管理
-    menu.add_command(label="患者", command=lambda: show_patient_management(content_frame))
-    
-    # 病历菜单 - 直接跳转到病历管理
-    menu.add_command(label="病历", command=lambda: show_medical_record(content_frame))
-    
-    # 处方菜单 - 直接跳转到处方管理
-    menu.add_command(label="处方", command=lambda: show_prescription(content_frame))
-    
-    # 药品菜单 - 直接跳转到药品管理
-    menu.add_command(label="药品", command=lambda: show_medicine(content_frame))
-    
-    # 导出菜单
-    menu.add_command(label="导出", command=lambda: export_all_data(content_frame))
-    
-    # 数据可视化菜单
-    menu.add_command(label="数据可视化", command=lambda: show_data_visualization(content_frame))
-    
-    # 设置菜单
-    root.config(menu=menu)
+    # 工具栏按钮
+    ttk.Button(toolbar, text="患者", command=lambda: show_patient_management(content_frame), bootstyle="outline-secondary").pack(side="left", padx=2, pady=5)
+    ttk.Button(toolbar, text="病历", command=lambda: show_medical_record(content_frame), bootstyle="outline-secondary").pack(side="left", padx=2, pady=5)
+    ttk.Button(toolbar, text="处方", command=lambda: show_prescription(content_frame), bootstyle="outline-secondary").pack(side="left", padx=2, pady=5)
+    ttk.Button(toolbar, text="药品", command=lambda: show_medicine(content_frame), bootstyle="outline-secondary").pack(side="left", padx=2, pady=5)
+    ttk.Button(toolbar, text="收藏夹", command=lambda: show_favorite_management(content_frame), bootstyle="outline-secondary").pack(side="left", padx=2, pady=5)
+    ttk.Button(toolbar, text="数据可视化", command=lambda: show_data_visualization(content_frame), bootstyle="outline-secondary").pack(side="left", padx=2, pady=5)
+    ttk.Button(toolbar, text="导出", command=lambda: export_all_data(content_frame), bootstyle="outline-secondary").pack(side="left", padx=2, pady=5)
     
     # 默认显示患者管理界面
     show_patient_management(content_frame)
@@ -119,6 +101,12 @@ def show_medicine(frame):
     clear_frame(frame)
     MedicineWindow = get_medicine_window()
     MedicineWindow(frame)
+
+def show_favorite_management(frame):
+    """显示收藏夹管理界面"""
+    clear_frame(frame)
+    from favorite import FavoriteManagementWindow
+    FavoriteManagementWindow(frame)
 
 def export_all_data(frame):
     """导出所有数据"""

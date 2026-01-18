@@ -35,23 +35,23 @@ class PrescriptionWindow:
         search_frame.pack(fill="x", padx=10, pady=5)
         
         # 患者姓名查询
-        ttk.Label(search_frame, text="患者姓名:", font=("微软雅黑", 9, "bold")).grid(row=0, column=0, padx=5, pady=5, sticky="e")
-        self.patient_name_search = ttk.Entry(search_frame, width=15)
-        self.patient_name_search.grid(row=0, column=1, padx=5, pady=5)
+        ttk.Label(search_frame, text="患者姓名:", font=("微软雅黑", 10, "bold")).grid(row=0, column=0, padx=5, pady=10, sticky="e")
+        self.patient_name_search = ttk.Entry(search_frame, width=15, font=("微软雅黑", 10))
+        self.patient_name_search.grid(row=0, column=1, padx=5, pady=10)
         
         # 病历ID查询
-        ttk.Label(search_frame, text="病历ID:", font=("微软雅黑", 9, "bold")).grid(row=0, column=2, padx=5, pady=5, sticky="e")
-        self.record_id_search = ttk.Entry(search_frame, width=10)
-        self.record_id_search.grid(row=0, column=3, padx=5, pady=5)
+        ttk.Label(search_frame, text="病历ID:", font=("微软雅黑", 10, "bold")).grid(row=0, column=2, padx=5, pady=10, sticky="e")
+        self.record_id_search = ttk.Entry(search_frame, width=10, font=("微软雅黑", 10))
+        self.record_id_search.grid(row=0, column=3, padx=5, pady=10)
         
         # 日期查询
-        ttk.Label(search_frame, text="日期:", font=("微软雅黑", 9, "bold")).grid(row=0, column=4, padx=5, pady=5, sticky="e")
-        self.date_search = ttk.Entry(search_frame, width=12)
-        self.date_search.grid(row=0, column=5, padx=5, pady=5)
+        ttk.Label(search_frame, text="日期:", font=("微软雅黑", 10, "bold")).grid(row=0, column=4, padx=5, pady=10, sticky="e")
+        self.date_search = ttk.Entry(search_frame, width=12, font=("微软雅黑", 10))
+        self.date_search.grid(row=0, column=5, padx=5, pady=10)
 
         # 查询按钮
         btn_frame = ttk.Frame(search_frame)
-        btn_frame.grid(row=0, column=6, padx=5, pady=5)
+        btn_frame.grid(row=0, column=6, padx=5, pady=10)
         
         ttk.Button(btn_frame, text="查询", command=self.search_prescriptions).pack(side="left", padx=5)
         ttk.Button(btn_frame, text="重置", command=self.reset_search).pack(side="left", padx=5)
@@ -63,21 +63,21 @@ class PrescriptionWindow:
         
         # 创建树形视图
         columns = ("record_id", "patient_name", "date", "medicine", "dosage", "usage")
-        self.prescription_tree = ttk.Treeview(list_frame, columns=columns, show="headings")
+        self.prescription_tree = ttk.Treeview(list_frame, columns=columns, show="headings", height=15)
         
         # 设置列标题
         self.prescription_tree.heading("record_id", text="病历ID", anchor="center")
-        self.prescription_tree.column("record_id", width=80)
+        self.prescription_tree.column("record_id", width=80, anchor="center")
         self.prescription_tree.heading("patient_name", text="患者姓名", anchor="center")
-        self.prescription_tree.column("patient_name", width=100)
+        self.prescription_tree.column("patient_name", width=120, anchor="center")
         self.prescription_tree.heading("date", text="日期", anchor="center")
-        self.prescription_tree.column("date", width=100)
+        self.prescription_tree.column("date", width=100, anchor="center")
         self.prescription_tree.heading("medicine", text="药品", anchor="center")
-        self.prescription_tree.column("medicine", width=120)
+        self.prescription_tree.column("medicine", width=150, anchor="center")
         self.prescription_tree.heading("dosage", text="剂量", anchor="center")
-        self.prescription_tree.column("dosage", width=80)
+        self.prescription_tree.column("dosage", width=80, anchor="center")
         self.prescription_tree.heading("usage", text="用法", anchor="center")
-        self.prescription_tree.column("usage", width=100)
+        self.prescription_tree.column("usage", width=120, anchor="center")
         
         # 添加滚动条
         scrollbar = ttk.Scrollbar(list_frame, orient="vertical", command=self.prescription_tree.yview)
@@ -86,6 +86,19 @@ class PrescriptionWindow:
         # 布局
         self.prescription_tree.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
+        
+        # 配置样式以添加交替行颜色
+        style = ttk.Style()
+        # 定义样式，注意在ttk中需要使用配置方式
+        style.configure("Treeview", rowheight=25, font=("微软雅黑", 10))
+        style.map("Treeview",
+            background=[('selected', '#3a7fd0')],
+            foreground=[('selected', 'white')]
+        )
+        # 为交替行定义样式
+        style.configure("Treeview.EvenRow", background="#f8f9fa", foreground="black")
+        style.configure("Treeview.OddRow", background="white", foreground="black")
+        style.configure("Treeview.Heading", font=("微软雅黑", 10, "bold"), background="#2c3e50", foreground="white")
         
         # 绑定右键事件 - 复制行信息到剪贴板
         self.prescription_tree.bind("<Button-3>", self.copy_row_to_clipboard)
