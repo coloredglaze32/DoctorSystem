@@ -22,10 +22,12 @@ class PrescriptionWindow:
         self.load_prescription()
     
     def create_back_button(self):
-        """创建返回按钮"""
+        """创建返回按钮和收藏按钮"""
         btn_frame = ttk.Frame(self.master)
         btn_frame.pack(fill="x", padx=10, pady=5)
+        
         ttk.Button(btn_frame, text="返回病历列表", command=self.back_to_records).pack(side="left", padx=5)
+        ttk.Button(btn_frame, text="收藏当前处方", command=self.add_to_favorites).pack(side="left", padx=5)
     
     def create_search_form(self):
         """创建查询表单"""
@@ -208,6 +210,57 @@ class PrescriptionWindow:
             self.master.clipboard_clear()  # 清空剪贴板
             self.master.clipboard_append(row_str)  # 添加到剪贴板
             messagebox.showinfo("提示", "已复制行信息到剪贴板")
+
+    def add_to_favorites(self):
+        """收藏当前病历的所有处方（收藏选中的那个病历的所有药品）"""
+        # 获取当前选中的处方
+        selected_items = self.prescription_tree.selection()
+        if not selected_items:
+            messagebox.showwarning("警告", "请选择要收藏的处方")
+            return
+        
+        # 获取选中项的信息
+        item_values = self.prescription_tree.item(selected_items[0], "values")
+        record_id = item_values[0]  # 病历ID
+        patient_name = item_values[1]
+        selected_medicine = item_values[3]  # 选中的药品名称
+        
+        # 获取该病历的所有处方信息（不只是选中的那一个）
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT p.medicine, p.dosage, p.usage
+            FROM prescriptions p
+            WHERE p.record_id = ?
+        """, (record_id,))
+        prescriptions = cursor.fetchall()
+        conn.close()
+        
+        if not prescriptions:
+            messagebox.showwarning("警告", "未找到相关处方信息")
+            return
+        
+        # 准备处方数据 - 包含该病历的所有处方
+        prescription_data = {
+            'record_id': record_id,
+            'patient_name': patient_name,
+            'prescriptions': []
+        }
+        
+        for pres in prescriptions:
+            prescription_data['prescriptions'].append({
+                'medicine': pres[0],
+                'dosage': pres[1],
+                'usage': pres[2]
+            })
+        
+        # 提示用户即将收藏整个病历的所有处方
+        medicine_list = [pres[0] for pres in prescriptions]
+        medicine_str = "、".join(medicine_list)
+        if messagebox.askyesno("确认收藏", f"您选择了药品 '{selected_medicine}'，将收藏该病历的所有药品组合：\n{medicine_str}\n\n是否继续？"):
+            # 打开收藏对话框
+            from favorite import AddToFavoritesDialog
+            dialog = AddToFavoritesDialog(self.master, record_id, patient_name, prescription_data)
 
     def back_to_records(self):
         """返回病历列表"""
